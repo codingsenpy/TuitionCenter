@@ -6,11 +6,12 @@ const schema=mongoose.Schema
 const centerSchema=new schema(
     {
         centerID: { type: String, required: true },
+        location:{type:String, required:true},
         teacher:teacherSchema,
         students: [studentSchema]
     }
 )
 
-const Centers = mongoose.model("Centers", centerSchema);
+const Centers = mongoose.model("Centers", centerSchema);u
 
 module.exports = Centers;

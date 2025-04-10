@@ -3,12 +3,17 @@ const path=require("path")
 const app=express()
 const mainroutes=require('./routes/main')
 const formroutes=require('./routes/form')
+const adminRoutes= require('./routes/adminRoutes')
+const teacherRoutes= require('./routes/teacherRoutes')
+
 const mongoose=require("mongoose")
 // const mongoconnect=require("./utils/database")
 app.use(express.urlencoded({ extended: true }));
 //middleware for transfering html form data
 app.use(express.json()); 
 
+app.use('/admin',adminRoutes)
+app.use('/teacher',teacherRoutes)
 app.use('/',mainroutes);
 
 app.listen(3000, () => {
