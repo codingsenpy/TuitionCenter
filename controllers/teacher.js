@@ -26,3 +26,13 @@ exports.addstd=async (req,res)=>{
         { $push: { students: data } }
         );
  }
+
+ exports.showstudents=async (req, res) => {
+    try {
+        const center = await centers.findOne({ centerID: req.params.id }, 'students');
+        if (!center) return res.status(404).send("Center not found");
+        res.json(center.students);
+      } catch (err) {
+        res.status(500).send('Server Error');
+      }
+};

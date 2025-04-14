@@ -10,6 +10,7 @@ router.use("/dashbord",admin.dashbord)
 router.use("/addCenter",admin.addCenter)
 router.use("/removeCenter:id",admin.removeCenter)
 router.use("/removeTutor/:cId",admin.removeTeacher)
+router.get("/Centers",admin.seecenters)
 
 
 module.exports=router

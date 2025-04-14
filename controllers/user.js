@@ -1,4 +1,6 @@
 const User=require("../models/user")
+const {setuser,getuser}=require("../service/auth")
+const { v4: uuidv4 } = require('uuid');
 
 exports.signup=async (req,res)=>{
     const { name, email, password } = req.body;
@@ -18,7 +20,9 @@ exports.login=async (req,res)=>{
     if(!user){
         res.send("email or password invalid")
     }
-    else{
-        res.redirect("/")
-    }
+    const sessionid=uuidv4()
+    setuser(sessionid,user)
+    res.cookie("uid",sessionid)
+    res.redirect("/")
+    
 }

@@ -6,6 +6,7 @@ const router=express.Router()
 
 
 router.use("/:centerID/addStudents",teacher.addstd)
+router.get("/students/C/:id",teacher.showstudents)
 router.use("/students",teacher.teacherdashbord)
 
 

@@ -57,3 +57,13 @@ exports.removeTeacher = async (req, res) => {
         await center.save();
         res.send("Teacher removed successfully");
     } 
+
+    exports.seecenters=async (req, res) => {
+        try {
+          const centers = await Centers.find(); // fetch all centers with full data
+          res.json(centers);
+        } catch (err) {
+          res.status(500).send("Server Error");
+        }
+      }
+      
