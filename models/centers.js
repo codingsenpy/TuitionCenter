@@ -12,6 +12,6 @@ const centerSchema=new schema(
     }
 )
 
-const Centers = mongoose.model("Centers", centerSchema);u
+const Centers = mongoose.model("Centers", centerSchema);
 
 module.exports = Centers;
