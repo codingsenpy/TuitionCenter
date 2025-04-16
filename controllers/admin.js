@@ -1,13 +1,14 @@
 const centers=require("../models/centers")
 
 exports.dashbord=async (req,res)=>{
-    console.log("In the admin dashbord")
-    console.log(req.url)
-    let data=req.body
-    const center=new centers(data)
-    await center.save();
-    console.log("data created")
-    res.send("dashbord")
+    // console.log("In the admin dashbord")
+    // console.log(req.url)
+    // let data=req.body
+    // const center=new centers(data)
+    // await center.save();
+    // console.log("data created")
+    // res.send("dashbord")
+    res.send("ADMIN DASHBORD")
 }
 
 exports.addCenter = async (req, res) => {

@@ -4,7 +4,8 @@ const secret_key="S3cR3IkEv"
 function setuser(user){
     return jwt.sign({
         id:user._id,
-        email:user.email
+        email:user.email,
+        role:user.role
     },secret_key)
 }
 

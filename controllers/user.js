@@ -20,9 +20,9 @@ exports.login=async (req,res)=>{
     if(!user){
         res.send("email or password invalid")
     }
-    const sessionid=uuidv4()
-    setuser(sessionid,user)
-    res.cookie("uid",sessionid)
+    // const sessionid=uuidv4()
+    const token=setuser(user)
+    res.cookie("uid",token)
     res.redirect("/")
     
 }
