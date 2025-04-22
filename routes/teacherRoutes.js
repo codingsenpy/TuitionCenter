@@ -4,10 +4,18 @@ const teacher=require("../controllers/teacher")
 
 const router=express.Router()
 
-
+//add students to center
 router.use("/:centerID/addStudents",teacher.addstd)
+//students of the center
 router.get("/students/C/:id",teacher.showstudents)
+//teacher dashboard
 router.use("/students",teacher.teacherdashbord)
+//attendance page
+router.use("/attendance",teacher.attendance)
+//TODO
+router.get("/attendaceOfAllStudents",teacher.attedanceOfAllStudents)
+//temperory route to fetch attendance, GEOLOCATION  
+router.use("/location",teacher.location)
 
 
 module.exports=router

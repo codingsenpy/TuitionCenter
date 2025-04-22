@@ -1,9 +1,19 @@
 const mongoose=require("mongoose")
-const schema=mongoose.Schema
+const centerSchema=require("./center")
+const studentSchema=require("./student")
 
-const teacherSchema=new schema({
-    name: String,
-    teacherId: String
-})
+const schema = mongoose.Schema
 
-module.exports=teacherSchema
+const user_schema = new schema(
+    {
+        name : {type : String, required: true},
+        phno : {type : Number, required: true},
+        email : {type : String,required: true},
+        specialisation: {type:String, required:true},
+        qualification:{type:Object},
+        students:[studentSchema]
+        
+    }
+)
+
+module.exports = mongoose.model("user",user_schema)

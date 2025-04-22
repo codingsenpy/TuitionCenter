@@ -1,9 +1,9 @@
 const express=require("express")
 const path=require("path")
 const app=express()
-const { restricttologin, checkAuth,adminonly } = require('./middleware/auth');
+const { restricttologin, checkAuth,adminonly , teacheronly} = require('./middleware/auth');
 const mainroutes=require('./routes/main')
-const formroutes=require('./routes/form')
+
 const adminRoutes= require('./routes/adminRoutes')
 const teacherRoutes= require('./routes/teacherRoutes')
 const mongoose=require("mongoose")
@@ -13,9 +13,12 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 //middleware for transfering html form data
 app.use(express.json()); 
+//for passing html form data as post
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use('/admin',restricttologin,adminonly,adminRoutes)
-app.use('/teacher',restricttologin,teacherRoutes)
+app.use('/teacher',restricttologin,teacheronly,teacherRoutes)
 app.use('/',mainroutes);
 
 app.listen(3000, () => {

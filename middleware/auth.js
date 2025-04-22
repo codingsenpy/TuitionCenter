@@ -7,7 +7,7 @@ async function restricttologin(req,res,next){
     if (!user) return res.redirect("/login");
   
     req.user = user;
-    console.log(req.user)
+    // console.log(req.user)
     next();
   }
   
@@ -25,8 +25,14 @@ function adminonly(req,res,next){
    else res.status(403).send("Unauthorised") 
 }
 
+function teacheronly(req,res,next){
+  if(req.user.role===2 || req.user.role===3) next()
+    else res.status(403).send("Unauthorised")
+}
+
   module.exports = {
     restricttologin,
     checkAuth,
-    adminonly
+    adminonly,
+    teacheronly
   };
