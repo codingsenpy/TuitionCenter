@@ -1,6 +1,5 @@
 const mongoose=require("mongoose")
 const tutorSchema=require("./teacher")
-const courseSchema=require("./course")
 const studentSchema = require("./student")
 const schema=mongoose.Schema
 
@@ -14,6 +13,6 @@ const centerSchema=new schema(
         students:[studentSchema]
     }
 )
-const Centers = mongoose.model("Centers", centerSchema);
+const Centers = mongoose.model("centers", centerSchema);
 
 module.exports = Centers;

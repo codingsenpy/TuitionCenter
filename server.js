@@ -18,7 +18,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/admin',restricttologin,adminonly,adminRoutes)
+app.use('/adminnoauth',adminRoutes)
 app.use('/teacher',restricttologin,teacheronly,teacherRoutes)
+app.use('/teachernoauth',teacherRoutes)
 app.use('/',mainroutes);
 
 app.listen(3000, () => {

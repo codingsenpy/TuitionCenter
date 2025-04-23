@@ -1,6 +1,8 @@
 const path=require("path")
 
-exports.home=(req,res)=>{
+exports.
+
+home=(req,res)=>{
     console.log("main js running")
     res.sendFile(path.join(__dirname,'../','views','dashbord.html'))
 }

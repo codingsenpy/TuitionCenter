@@ -17,5 +17,7 @@ router.get("/attendaceOfAllStudents",teacher.attedanceOfAllStudents)
 //temperory route to fetch attendance, GEOLOCATION  
 router.use("/location",teacher.location)
 
+// router.post("/markAttedance",isLoggedIn,teacher.MarkAttendance)
+
 
 module.exports=router

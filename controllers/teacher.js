@@ -1,4 +1,5 @@
 const path=require("path")
+// const moment = require('moment');
 
 const students=require("../models/student")
 const centers=require("../models/centers")
@@ -39,7 +40,7 @@ exports.addstd=async (req,res)=>{
       }
 };
 
-exports.attendance=(req,res)=>{
+exports.attendance=async (req,res)=>{
     res.sendFile(path.join(__dirname,'../','views','loc.html'))
 }
 
@@ -48,10 +49,17 @@ exports.attedanceOfAllStudents=async (req,res)=>{
 }
 
 exports.location=async (req,res)=>{
+    req.body.center="C124"
     const { latitude, longitude, center } = req.body;
-    console.log('Received location:', latitude, longitude);
+    console.log('Received location:', latitude, longitude, center);
     if(!latitude) res.send("Unable to fetch Location")
-    const centerlocation= await centers.findOne({centerID:center}, location)
-    
-    res.sendStatus(200);
+    const centerlocation = await centers.findOne({ centerID: center }, { location: 1, _id: 0 });
+    console.log(centerlocation)
+    if(`${latitude} ${longitude}`==centerlocation.location){
+        console.log("attendance succesfull")
+        res.send("Attendance success")
+    }
+    else{
+        console.log("Fail")
+    }
 }

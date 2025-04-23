@@ -3,18 +3,19 @@ const {setuser,getuser}=require("../service/auth")
 const { v4: uuidv4 } = require('uuid');
 
 exports.signup=async (req,res)=>{
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
   await User.create({
     name,
     email,
     password,
+    role
   });
   console.log(__dirname,"user signed up")
   res.redirect("/");
 }
 
 exports.login=async (req,res)=>{
-    const {email,password}=req.body
+    const {email,password,role}=req.body
     const user=await User.findOne({email,password})
     console.log(user)
     if(!user){
