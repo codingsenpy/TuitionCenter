@@ -13,9 +13,9 @@ exports.dashbord=async (req,res)=>{
 
 exports.addCenter = async (req, res) => {
     try {
-        const { centerID, contactnumber, contactperson, location, tutors, students } = req.body;
+        const { centerID, contactnumber, contactperson, location,city, tutors, students } = req.body;
 
-        if (!centerID || !contactnumber || !contactperson || !location) {
+        if (!centerID || !contactnumber || !location) {
             return res.status(400).send("Missing required fields");
         }
 
@@ -28,6 +28,7 @@ exports.addCenter = async (req, res) => {
             centerID,
             contactnumber,
             contactperson,
+            city,
             location,
             tutors: tutors || [],
             students: students || []

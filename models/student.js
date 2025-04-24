@@ -3,8 +3,8 @@ const schema=mongoose.Schema
 
 const studentSchema=new schema(
     {
-    name: String,
-    studentId: String,
+    name: {type:String, required:true},
+    studentId: {type:String, required:true,unique:true},
     attendance: [
         {
             date: Date,
