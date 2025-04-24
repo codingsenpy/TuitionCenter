@@ -17,6 +17,8 @@ router.use("/removeTutor/:cId",admin.removeTeacher)
 router.get("/Centers",admin.seecenters)
 //dashboard
 router.use("/",admin.dashbord)
+//remove students
+router.delete("/:centerID/removeSt",admin.removestd)
 
 
 module.exports=router

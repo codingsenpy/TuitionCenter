@@ -12,23 +12,69 @@ exports.teacherdashbord=async (req,res)=>{
     res.send("Welcome teacher")
 }
 
-exports.addstd=async (req,res)=>{
-    const centerId = req.params.centerID
-    console.log(typeof(centerId))
-    const data=req.body
+exports.addstd = async (req, res) => {
+    try {
+        const centerId = req.params.centerID;
+        const students = req.body;  // Assuming req.body contains an array of students.
 
-    if (data.attendance) {
-        data.attendance = data.attendance.map(entry => ({
-            date: new Date(entry.date), // Convert to Date
-            status: entry.status
-        }));
-    }
+        if (!centerId || !Array.isArray(students) || students.length === 0) {
+            return res.status(400).send("Missing required student data or centerID");
+        }
 
-    await centers.updateOne(
-        { centerID: centerId }, 
-        { $push: { students: data } }
+        // Iterate through each student and ensure only the required fields are included
+        const validatedStudents = students.map(student => {
+            // Ensure that each student has name and studentId
+            if (!student.name || !student.studentId) {
+                throw new Error("Missing required student fields (name or studentId)");
+            }
+            // Initialize attendance as an empty array
+            student.attendance = [];
+            return student;
+        });
+
+        const result = await centers.updateOne(
+            { centerID: centerId },
+            { $push: { students: { $each: validatedStudents } } }
         );
- }
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).send("Center not found or no update made");
+        }
+
+        res.send("Students added successfully");
+    } catch (err) {
+        console.error("Error adding student:", err);
+        res.status(500).send("Internal server error");
+    }
+}
+
+
+exports.removestd = async (req, res) => {
+    try {
+        const centerId = req.params.centerID;
+        const { studentIds } = req.body; // array of studentId
+
+        if (!centerId || !Array.isArray(studentIds) || studentIds.length === 0) {
+            return res.status(400).send("Missing or invalid centerID or studentIds");
+        }
+
+        const result = await centers.updateOne(
+            { centerID: centerId },
+            { $pull: { students: { studentId: { $in: studentIds } } } }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).send("No students removed");
+        }
+
+        res.send("Students removed successfully");
+    } catch (err) {
+        console.error("Error removing students:", err);
+        res.status(500).send("Internal server error");
+    }
+};
+
+
 
  exports.showstudents=async (req, res) => {
     try {
@@ -38,6 +84,35 @@ exports.addstd=async (req,res)=>{
       } catch (err) {
         res.status(500).send('Server Error');
       }
+};
+exports.markAttendance = async (req, res) => {
+    try {
+        const centerId = req.params.centerID;
+        const presentStudentIds = req.body.presentStudents; // array of studentId
+        const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+
+        const center = await centers.findOne({ centerID: centerId });
+        if (!center) return res.status(404).send("Center not found");
+
+        for (let student of center.students) {
+            const isPresent = presentStudentIds.includes(student.studentId);
+            const alreadyMarked = student.attendance.some(a =>
+                a.date.toISOString().split("T")[0] === today
+            );
+            if (!alreadyMarked) {
+                student.attendance.push({
+                    date: new Date(),
+                    status: isPresent ? "Present" : "Absent"
+                });
+            }
+        }
+
+        await center.save();
+        res.send("Attendance marked successfully");
+    } catch (err) {
+        console.error("Attendance marking error:", err);
+        res.status(500).send("Internal server error");
+    }
 };
 
 exports.attendance=async (req,res)=>{

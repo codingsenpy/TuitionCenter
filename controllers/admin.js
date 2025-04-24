@@ -12,29 +12,59 @@ exports.dashbord=async (req,res)=>{
 }
 
 exports.addCenter = async (req, res) => {
-    const { centerID, location, teacher, students } = req.body;
+    try {
+        const { centerID, contactnumber, contactperson, location, tutors, students } = req.body;
 
-        const newCenter = new Center({
+        if (!centerID || !contactnumber || !contactperson || !location) {
+            return res.status(400).send("Missing required fields");
+        }
+
+        const existing = await centers.findOne({ centerID });
+        if (existing) {
+            return res.status(409).send("Center with this ID already exists");
+        }
+
+        const newCenter = new centers({
             centerID,
+            contactnumber,
+            contactperson,
             location,
-            teacher,
-            students
+            tutors: tutors || [],
+            students: students || []
         });
 
         await newCenter.save();
-        res.send("Center added successfully");
+        res.status(201).send("Center added successfully");
+    } catch (err) {
+        console.error("Error adding center:", err);
+        res.status(500).send("Internal server error");
     }
+};
 
-exports.newteacher=async(req,res)=>{
-    const centerId = req.params.centerID
-    console.log(centerId)
-    const data=req.body
-    await centers.updateOne(
-        { centerID: centerId }, // Find the center by centerID
-        { $set: { teacher: data } } // Assign the teacher
-    );
-    res.send("done")
-}
+exports.newteacher = async (req, res) => {
+    try {
+        const centerId = req.params.centerID;
+        const data = req.body;
+
+        if (!centerId || !data) {
+            return res.status(400).send("Missing centerID or teacher data");
+        }
+
+        const result = await centers.updateOne(
+            { centerID: centerId },
+            { $push: { tutors: data } } // Push teacher data into tutors array
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).send("Center not found or no update made");
+        }
+
+        res.send("Teacher added successfully");
+    } catch (err) {
+        console.error("Error adding teacher:", err);
+        res.status(500).send("Internal server error");
+    }
+};
 
 exports.removeCenter = async (req, res) => {
     const { centerID } = req.params;
@@ -67,4 +97,30 @@ exports.removeTeacher = async (req, res) => {
           res.status(500).send("Server Error");
         }
       }
+
+      exports.removestd = async (req, res) => {
+        try {
+            const centerId = req.params.centerID;
+            const { studentIds } = req.body; // array of studentId
+    
+            if (!centerId || !Array.isArray(studentIds) || studentIds.length === 0) {
+                return res.status(400).send("Missing or invalid centerID or studentIds");
+            }
+    
+            const result = await centers.updateOne(
+                { centerID: centerId },
+                { $pull: { students: { studentId: { $in: studentIds } } } }
+            );
+    
+            if (result.modifiedCount === 0) {
+                return res.status(404).send("No students removed");
+            }
+    
+            res.send("Students removed successfully");
+        } catch (err) {
+            console.error("Error removing students:", err);
+            res.status(500).send("Internal server error");
+        }
+    };
+    
       

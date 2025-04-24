@@ -8,7 +8,7 @@ const teacherSchema=new schema({
     email : {type : String,required: true},
     specialisation: {type:String, required:true},
     qualification:{type:Object},
-    students:[studentSchema]
+    // students:[studentSchema]
 })
 
 module.exports=teacherSchema
