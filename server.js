@@ -40,3 +40,4 @@ mongoose.connect("mongodb+srv://zain:mongopass@tuitioncenter.7z2uct8.mongodb.net
 .then(() => console.log("DB Connected to Server!"))
 .catch((err) => console.log(err));
 // mongoconnect(()=>{})
+    

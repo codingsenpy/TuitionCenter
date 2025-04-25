@@ -1,10 +1,11 @@
 const mongoose = require("mongoose")
 const tutorSchema = require("./teacher")
 const studentSchema = require("./student")
-const schema = mongoose.Schema
 
+const schema=mongoose.Schema
 const centerSchema = new schema(
     {
+
         name: { type: String, required: true },
         code: { type: String, required: true, unique: true },
         address: { type: String, required: true },
@@ -14,6 +15,7 @@ const centerSchema = new schema(
         images: { type: [String], required: true },
         tutors: [tutorSchema],
         students: [studentSchema]
+
     }
 )
 const Centers = mongoose.model("centers", centerSchema);

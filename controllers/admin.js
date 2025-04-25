@@ -1,4 +1,7 @@
 const centers=require("../models/centers")
+const User=require("../models/user")
+const {setuser,getuser}=require("../service/auth")
+const { v4: uuidv4 } = require('uuid')
 
 exports.dashbord=async (req,res)=>{
     // console.log("In the admin dashbord")
@@ -43,10 +46,16 @@ exports.addCenter = async (req, res) => {
 };
 
 exports.newteacher = async (req, res) => {
-    try {
         const centerId = req.params.centerID;
         const data = req.body;
-
+        console.log(data)
+        let {name,email,password}=data
+        const role=2
+        if(!password){
+            password="teacher123"
+        }
+        console.log(name,email,password)
+    try {
         if (!centerId || !data) {
             return res.status(400).send("Missing centerID or teacher data");
         }
@@ -65,11 +74,28 @@ exports.newteacher = async (req, res) => {
         console.error("Error adding teacher:", err);
         res.status(500).send("Internal server error");
     }
-};
+    try {
+      await User.create({
+        name,
+        email,
+        password,
+        role
+      });
+      console.log(__dirname,"user signed up")
+    } catch (err) {
+      console.log(err, "err in signup");
+      if (err.errorResponse.errmsg.includes("duplicate key")) {
+        res.status(400).json({ message: "Email Already Exists!", success: false });
+      } else {
+        res.status(500).json({ message: "Internal Server Error!", success: false });
+      }
+    }
+    }
+
 
 exports.removeCenter = async (req, res) => {
     const { centerID } = req.params;
-
+    console.log("trying to remove center")
         const result = await Center.deleteOne({ centerID });
 
         if (result.deletedCount === 0) {
@@ -79,16 +105,25 @@ exports.removeCenter = async (req, res) => {
         res.send("Center removed successfully");
     } 
 
-exports.removeTeacher = async (req, res) => {
-    const { centerID } = req.params.cId;
+    exports.removeTeacher = async (req, res) => {
+        const centerID = req.params.cId;
+    
+        if (!centerID) {
+            return res.status(400).send("Center ID missing");
+        }
+    
+        const center = await centers.findOne({ centerID });
+    
         if (!center) {
             return res.status(404).send("Center not found");
-         }
-          center.teacher = null;
+        }
     
+        center.tutors = [];
         await center.save();
+    
         res.send("Teacher removed successfully");
-    } 
+    };
+    
 
     exports.seecenters=async (req, res) => {
         try {

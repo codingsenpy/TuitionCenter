@@ -6,6 +6,7 @@ const teacherSchema=new schema({
     name : {type : String, required: true},
     number : {type : Number, required: true},
     email : {type : String,required: true},
+    password:{type:String,required:true,default:"teacher123"},
     specialisation: {type:String, required:true},
     qualification:{type:String},
     centerID:{type:String},
