@@ -1,14 +1,15 @@
 const express=require("express")
 const path=require("path")
 const admin=require("../controllers/admin")
+const upload=require("../utils/utils")
 
 
 const router=express.Router()
 
 //add tutor to a center
-router.use("/:centerID/addtutor",admin.newteacher)
+router.post("/:centerID/addtutor",upload.single("resume"),admin.newteacher)
 //add new center
-router.post("/addCenter",admin.addCenter)
+router.post("/addCenter",upload.array("images",5),admin.addCenter)
 //remove center
 router.delete("/removeCenter/:centerID",admin.removeCenter)
 //remove tutor from center

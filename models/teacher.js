@@ -4,13 +4,14 @@ const schema=mongoose.Schema
 
 const teacherSchema=new schema({
     name : {type : String, required: true},
-    phno : {type : Number, required: true},
+    number : {type : Number, required: true},
     email : {type : String,required: true},
     password:{type:String,required:true,default:"teacher123"},
     specialisation: {type:String, required:true},
-    contactnumber:{type:String,required:true},
-    qualification:{type:Object},
-    centerID:{type:String}
+    qualification:{type:String},
+    centerID:{type:String},
+    experience:{type:String},
+    resume:{type:String}
     // students:[studentSchema]
 })
 
