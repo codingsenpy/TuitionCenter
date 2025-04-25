@@ -12,7 +12,7 @@ router.post("/addCenter",admin.addCenter)
 //remove center
 router.delete("/removeCenter:id",admin.removeCenter)
 //remove tutor from center
-router.use("/removeTutor/:cId",admin.removeTeacher)
+router.delete("/removeTutor/:cId",admin.removeTeacher)
 //see all centers
 router.get("/Centers",admin.seecenters)
 //dashboard

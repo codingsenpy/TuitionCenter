@@ -79,16 +79,25 @@ exports.removeCenter = async (req, res) => {
         res.send("Center removed successfully");
     } 
 
-exports.removeTeacher = async (req, res) => {
-    const { centerID } = req.params.cId;
+    exports.removeTeacher = async (req, res) => {
+        const centerID = req.params.cId;
+    
+        if (!centerID) {
+            return res.status(400).send("Center ID missing");
+        }
+    
+        const center = await centers.findOne({ centerID });
+    
         if (!center) {
             return res.status(404).send("Center not found");
-         }
-          center.teacher = null;
+        }
     
+        center.tutors = null;
         await center.save();
+    
         res.send("Teacher removed successfully");
-    } 
+    };
+    
 
     exports.seecenters=async (req, res) => {
         try {

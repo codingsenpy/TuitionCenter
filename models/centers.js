@@ -1,6 +1,7 @@
 const mongoose=require("mongoose")
 const tutorSchema=require("./teacher")
 const studentSchema = require("./student")
+// const imageSchema=require("./images")
 const schema=mongoose.Schema
 
 const centerSchema=new schema(
@@ -11,7 +12,8 @@ const centerSchema=new schema(
         contactperson: { type: String},
         contactnumber: { type: Number, required: true },
         tutors:[tutorSchema],
-        students:[studentSchema]
+        students:[studentSchema],
+        // images:[imageSchema]
     }
 )
 const Centers = mongoose.model("centers", centerSchema);

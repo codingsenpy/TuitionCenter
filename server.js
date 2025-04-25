@@ -27,6 +27,7 @@ app.listen(3000, () => {
     console.log('Server running on port 3000');
 });
 
-mongoose.connect(DB_URL).then(() => console.log("DB Connected to Server!"))
+mongoose.connect("mongodb+srv://zain:mongopass@tuitioncenter.7z2uct8.mongodb.net/?retryWrites=true&w=majority&appName=TuitionCenter").then(() => console.log("DB Connected to Server!"))
 .catch((err) => console.log(err));
 // mongoconnect(()=>{})
+    
