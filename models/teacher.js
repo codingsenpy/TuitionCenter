@@ -15,4 +15,8 @@ const teacherSchema=new schema({
     // students:[studentSchema]
 })
 
+teacherSchema.pre("save", () => {
+    
+})
+
 module.exports=teacherSchema
