@@ -128,7 +128,6 @@ exports.markAttendance = async (req, res) => {
       return res.status(400).send("Invalid presentStudentIds");
     }
 
-    // Fetch all students who are not present in the presentStudentIds
     const allStudents = await Students.find({});
 
     const updates = allStudents.map(async (student) => {
