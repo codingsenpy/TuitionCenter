@@ -110,7 +110,7 @@ exports.removeCenter = async (req, res) => {
 
         res.send("Center removed successfully");
     } 
-
+ 
     exports.removeTeacher = async (req, res) => {
         try {
             const centerID = req.params.cId;

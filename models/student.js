@@ -29,7 +29,7 @@ const studentSchema = new mongoose.Schema({
   tutorID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Only users with role = 1 (Tutor)
-    required: true
+    // required: true 
   }
 }, { timestamps: true });
 

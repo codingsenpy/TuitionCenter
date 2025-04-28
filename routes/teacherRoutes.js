@@ -5,15 +5,16 @@ const teacher=require("../controllers/teacher")
 const router=express.Router()
 
 //add students to center
-router.put("/:centerID/addStudents",teacher.addstd)
+router.post("/:centerID/addStudents",teacher.addstd)
 //remove student
-router.delete("/:centerID/removeSt",teacher.removestd)
+router.delete("/:centerID/removeStd",teacher.removestd)
 //students of the center
-router.get("/students/C/:id",teacher.showstudents)
+router.get("/allstudents",teacher.getAllStudents)
+router.get("/students/:centerID",teacher.showstudents)
 //teacher dashboard
 router.use("/students",teacher.teacherdashbord)
 //mark todays attendance for students
-router.put("/:centerID/markattendance",teacher.markAttendance)
+router.put("/markStudentAttendance",teacher.markAttendance)
 //attendance page
 router.use("/attendance",teacher.attendance)
 //TODO

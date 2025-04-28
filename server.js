@@ -39,5 +39,5 @@ app.listen(3000, () => {
 mongoose.connect(DB_URL)
 .then(() => console.log("DB Connected to Server!"))
 .catch((err) => console.log(err));
-// mongoconnect(()=>{})
+// mongoconnect(()=>{}) 
     
