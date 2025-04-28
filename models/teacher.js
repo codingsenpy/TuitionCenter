@@ -19,8 +19,4 @@
 //     // students:[studentSchema]
 // })
 
-
-})
-
-module.exports=teacherSchema
-
+// module.exports=teacherSchema
