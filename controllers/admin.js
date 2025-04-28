@@ -16,10 +16,10 @@ exports.dashbord=async (req,res)=>{
 
 exports.addCenter = async (req, res) => {
     try {
-        const { centerID, contactnumber, contactperson, location,city, tutors, students } = req.body;
+        const { name,centerID,location,city,number, contactperson,  tutors, students } = req.body;
 
-        if (!centerID || !contactnumber || !location) {
-            return res.status(400).send("Missing required fields");
+        if (!centerID ||!name) {
+            return res.status(400).send("Center Id or name missingMissing required fields");
         }
 
         const existing = await centers.findOne({ centerID });
@@ -28,8 +28,10 @@ exports.addCenter = async (req, res) => {
         }
 
         const newCenter = new centers({
+            name,
             centerID,
-            contactnumber,
+            location,
+            number,
             contactperson,
             city,
             location,
@@ -46,57 +48,61 @@ exports.addCenter = async (req, res) => {
 };
 
 exports.newteacher = async (req, res) => {
-        const centerId = req.params.centerID;
-        const data = req.body;
-        console.log(data)
-        let {name,email,password}=data
-        const role=2
-        if(!password){
-            password="teacher123"
-        }
-        console.log(name,email,password)
+    const centerID = req.params.centerID;
+    let { name, email, password,number,specialisation,qualification,experience,resume } = req.body;
+    const role = 1; // 1 means Tutor
+    password=password||"teacher123"
+    
     try {
-        if (!centerId || !data) {
-            return res.status(400).send("Missing centerID or teacher data");
+        if (!name || !email) {
+            return res.status(400).send("Missing required fields");
         }
-
-        const result = await centers.updateOne(
-            { centerID: centerId },
-            { $push: { tutors: data } } // Push teacher data into tutors array
+        const existing=await User.findOne({email})
+        if(!existing){
+            const newTutor = new User({
+            name,
+            email,
+            password,
+            role,
+            number,
+            specialisation,
+            qualification,
+            experience,
+            resume
+        });
+        const savedTutor = await newTutor.save();
+        if(centerID!="0"){
+            const result = await centers.updateOne(
+            { centerID: centerID },
+            { $push: { tutors: savedTutor._id } }
         );
-
         if (result.modifiedCount === 0) {
             return res.status(404).send("Center not found or no update made");
         }
-
+        }
+        
+        }
+        else{
+            const result = await centers.updateOne(
+            { centerID: centerID },
+            { $push: { tutors: existing._id } }
+        );
+        if (result.modifiedCount === 0) {
+            return res.status(404).send("Center not found or no update made");
+        }
+        }
+        
         res.send("Teacher added successfully");
     } catch (err) {
         console.error("Error adding teacher:", err);
         res.status(500).send("Internal server error");
     }
-    try {
-      await User.create({
-        name,
-        email,
-        password,
-        role
-      });
-      console.log(__dirname,"user signed up")
-    } catch (err) {
-      console.log(err, "err in signup");
-      if (err.errorResponse.errmsg.includes("duplicate key")) {
-        res.status(400).json({ message: "Email Already Exists!", success: false });
-      } else {
-        res.status(500).json({ message: "Internal Server Error!", success: false });
-      }
-    }
-    }
+}
 
 
 exports.removeCenter = async (req, res) => {
     const { centerID } = req.params;
-    console.log("trying to remove center")
-        const result = await Center.deleteOne({ centerID });
+        const result = await centers.deleteOne({ centerID });
 
         if (result.deletedCount === 0) {
             return res.status(404).send("Center not found");
@@ -106,29 +112,43 @@ exports.removeCenter = async (req, res) => {
     } 
 
     exports.removeTeacher = async (req, res) => {
-        const centerID = req.params.cId;
+        try {
+            const centerID = req.params.cId;
+            const { email } = req.body;
+            console.log(email,centerID)
+            if (!centerID || !email) {
+                return res.status(400).send("Missing centerID or teacher email");
+            }
+            const existing = await User.findOne(
+                { email },
+            );
+            if(!existing){
+                return res.status(404).send("Teacher not found")
+            }
+            const result = await centers.updateOne(
+                { centerID },
+                { $pull: { tutors: existing._id } }
+            );
+            const result2= await User.deleteOne({ email});
+
+            if (result.modifiedCount === 0 && result2.deletedCount===0) {
+                return res.status(404).send("Teacher not found or already removed");
+            }
     
-        if (!centerID) {
-            return res.status(400).send("Center ID missing");
+            res.send("Teacher removed successfully");
+        } catch (err) {
+            console.error("Error removing teacher:", err);
+            res.status(500).send("Internal server error");
         }
-    
-        const center = await centers.findOne({ centerID });
-    
-        if (!center) {
-            return res.status(404).send("Center not found");
-        }
-    
-        center.tutors = [];
-        await center.save();
-    
-        res.send("Teacher removed successfully");
     };
+    
     
 
     exports.seecenters=async (req, res) => {
+        console.log("see centers")
         try {
-          const centers = await Centers.find(); // fetch all centers with full data
-          res.json(centers);
+          const Centers = await centers.find(); // fetch all centers with full data
+          res.json(Centers);
         } catch (err) {
           res.status(500).send("Server Error");
         }

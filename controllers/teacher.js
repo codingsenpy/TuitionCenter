@@ -124,17 +124,29 @@ exports.attedanceOfAllStudents=async (req,res)=>{
 }
 
 exports.location=async (req,res)=>{
-    req.body.center="C124"
     const { latitude, longitude, center } = req.body;
     console.log('Received location:', latitude, longitude, center);
     if(!latitude) res.send("Unable to fetch Location")
     const centerlocation = await centers.findOne({ centerID: center }, { location: 1, _id: 0 });
-    console.log(centerlocation)
-    if(`${latitude} ${longitude}`==centerlocation.location){
+    // centerlocation.location=`${latitude} ${longitude}`
+    const newLat = parseFloat(parseFloat(latitude).toFixed(3));
+    const newLon = parseFloat(parseFloat(longitude).toFixed(3))
+    try{
+        const {location}=centerlocation
+        console.log(centerlocation, newLat, newLon, typeof location)
+        console.log(Object.keys(centerlocation))
+        console.log(JSON.stringify(centerlocation))
+    if(`${newLat} ${newLon}`==centerlocation.location){
         console.log("attendance succesfull")
         res.send("Attendance success")
     }
     else{
+        res.send("attendance fail")
         console.log("Fail")
+    }
+    }
+    catch(err){
+        res.send(err.message)
+        console.log(err.message)
     }
 }
