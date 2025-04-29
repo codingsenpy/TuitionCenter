@@ -152,10 +152,15 @@ exports.removeCenter = async (req, res) => {
             if(!existing){
                 return res.status(404).send("Teacher not found")
             }
+
             const result = await centers.updateOne(
-                { centerID },
-                { $pull: { tutors: existing._id } }
-            );
+                        { centerID: centerID },
+                        { $pull: { tutors: { tutorId: { $in: [existing._id] } } } }
+                    );
+            // const result = await centers.updateOne(
+            //     { centerID :centerID},
+            //     { $pull: { tutors: existing._id } }
+            // );
             const result2= await User.deleteOne({ email});
 
             if (result.modifiedCount === 0 && result2.deletedCount===0) {

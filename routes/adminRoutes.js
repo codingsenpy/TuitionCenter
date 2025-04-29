@@ -7,7 +7,8 @@ const upload=require("../utils/utils")
 const router=express.Router()
 
 //add tutor to a center
-router.post("/:centerID/addtutor",upload.single("resume"),admin.newteacher)
+// upload.single("resume")
+router.post("/addtutor/:centerID",admin.newteacher)
 //add new center
 router.post("/addCenter",upload.array("images",5),admin.addCenter)
 //remove center
