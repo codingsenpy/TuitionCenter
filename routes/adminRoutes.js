@@ -14,6 +14,7 @@ router.post("/addCenter",upload.array("images",5),admin.addCenter)
 router.delete("/removeCenter/:centerID",admin.removeCenter)
 //remove tutor from center
 router.delete("/removeTutor/:cId",admin.removeTeacher)
+router.put("/removetutorsfrom/:centerID",admin.removeTutorsFromCenter)
 //see all centers
 router.get("/Centers",admin.seecenters)
 router.get("/alltutors",admin.getAllTutors)

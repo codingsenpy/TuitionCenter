@@ -99,6 +99,33 @@ exports.newteacher = async (req, res) => {
     }
 }
 
+exports.removeTutorsFromCenter = async (req, res) => {
+    try {
+      const centerId = req.params.centerID;
+      const { tutorEmails } = req.body; // array of tutor emails
+  
+      if (!centerId || !Array.isArray(tutorEmails) || tutorEmails.length === 0) {
+        return res.status(400).send("Missing or invalid centerID or tutorEmails");
+      }
+      const tutors = await User.find({ email: { $in: tutorEmails }, role: 1 }); // role 1 = tutor
+    const tutorIds = tutors.map(tutor => tutor._id);
+      const result = await centers.updateOne(
+        { centerID: centerId },
+        { $pull: { tutors: { $in: tutorIds } } }
+      );
+  
+      if (result.modifiedCount === 0) {
+        return res.status(404).send("No tutors removed from center");
+      }
+  
+      res.send("Tutors removed from center successfully");
+    } catch (err) {
+      console.error("Error removing tutors from center:", err);
+      res.status(500).send("Internal server error");
+    }
+  };
+  
+
 
 exports.removeCenter = async (req, res) => {
     const { centerID } = req.params;
