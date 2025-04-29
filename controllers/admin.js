@@ -179,4 +179,64 @@ exports.removeCenter = async (req, res) => {
         }
     };
     
-      
+exports.getAllStudents = async (req, res) => {
+  try {
+    const students = await Students.find();
+    res.status(200).json(students);
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.showstudents=async (req, res) => {
+  try {
+    const centerId = req.params.centerID;
+
+    if (!centerId) {
+      return res.status(400).send("Missing centerID");
+    }
+
+    const center = await centers.findOne({ centerID: centerId }).populate('students');
+console.log(center)
+    if (!center) {
+      return res.status(404).send("Center not found");
+    }
+
+    res.status(200).json(center.students);
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.getAllTutors = async (req, res) => {
+  try {
+    const tutors = await User.find({role:1});
+    res.status(200).json(tutors);
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    res.status(500).send("Internal server error");
+  }
+};
+
+ exports.showtutors=async (req, res) => {
+  try {
+    const centerId = req.params.centerID;
+
+    if (!centerId) {
+      return res.status(400).send("Missing centerID");
+    }
+
+    const center = await centers.findOne({ centerID: centerId }).populate('tutors');
+console.log(center)
+    if (!center) {
+      return res.status(404).send("Center not found");
+    }
+
+    res.status(200).json(center.tutors);
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    res.status(500).send("Internal server error");
+  }
+};

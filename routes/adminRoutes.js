@@ -16,6 +16,10 @@ router.delete("/removeCenter/:centerID",admin.removeCenter)
 router.delete("/removeTutor/:cId",admin.removeTeacher)
 //see all centers
 router.get("/Centers",admin.seecenters)
+router.get("/alltutors",admin.getAllTutors)
+router.get("/tutors/:centerID",admin.showtutors)
+router.get("/allstudents",admin.getAllStudents)
+router.get("/students/:centerID",admin.showstudents)
 //remove students
 router.delete("/:centerID/removeSt",admin.removestd)
 //dashboard
