@@ -39,5 +39,5 @@ app.listen(3000, () => {
 mongoose.connect("mongodb+srv://zain:mongopass@tuitioncenter.7z2uct8.mongodb.net/?retryWrites=true&w=majority&appName=TuitionCenter")
 .then(() => console.log("DB Connected to Server!"))
 .catch((err) => console.log(err));
-// mongoconnect(()=>{})
+// mongoconnect(()=>{}) 
     
