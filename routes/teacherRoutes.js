@@ -7,6 +7,7 @@ const router=express.Router()
 //add students to center
 router.put("/addStudents/:centerID",teacher.addstd)
 //remove student
+router.delete("/removeStd/:centerID",teacher.removestd)
 //students of the center
 router.get("/students/C/:id",teacher.showstudents)
 //teacher dashboard
