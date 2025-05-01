@@ -32,12 +32,14 @@ app.use('/teacher',restricttologin,teacheronly,teacherRoutes)
 app.use('/teachernoauth',teacherRoutes)
 app.use('/',mainroutes);
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
     console.log('Server running on port 3000');
 });
 
 mongoose.connect("mongodb+srv://zain:mongopass@tuitioncenter.7z2uct8.mongodb.net/?retryWrites=true&w=majority&appName=TuitionCenter")
 .then(() => console.log("DB Connected to Server!"))
 .catch((err) => console.log(err));
-// mongoconnect(()=>{}) 
-    
+
+// mongoose.connect("mongodb://localhost:27017/tuitioncenter")
+// .then(() => console.log("DB Connected to Server!"))                  

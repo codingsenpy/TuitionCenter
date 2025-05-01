@@ -24,6 +24,7 @@ router.get("/allstudents",admin.getAllStudents)
 router.get("/students/:centerID",admin.showstudents)
 //remove students
 router.delete("/:centerID/removeSt",admin.removestd)
+router.get("/studentsof/:tutorMail",admin.getStudentsByTutor)
 //dashboard
 router.use("/",admin.dashbord)
 
