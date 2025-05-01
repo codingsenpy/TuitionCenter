@@ -24,21 +24,32 @@ exports.signup=async (req,res)=>{
 }
 exports.login = async (req, res) => {
   try {
-      const { email, password, role } = req.body;
+      const { number, password } = req.body;
 
-      if (!email || !password) {
-          return res.status(400).send("Missing email, password, or role");
+      if (!number || !password) {
+          return res.status(400).send("Missing phone, password, or role");
       }
 
-      const user = await User.findOne({ email, password});
+      const user = await User.findOne({ number, password});
+      // console.log("User found:", user);
 
       if (!user) {
-          return res.status(401).send("Email, password, or role is incorrect");
+          return res.status(401)
+          .json({message:"Phone number or password incorrect",
+            success:false
+          });
       }
-
+      // console.log("1. Login successful. Sending token.");
       const token = setuser(user);
-      res.cookie("uid", token, { httpOnly: true, secure: true });
-      res.redirect("/");
+      // res.cookie("uid", token, { httpOnly: true, secure: true });
+      // res.send(user);
+      // console.log("2. Login successful. Sending token.");
+      res.status(200).json({
+        success: true,
+        message: "Login successful",
+        user, // optional
+        token
+      });
   } catch (err) {
       console.error("Login error:", err);
       res.status(500).send("Internal server error");

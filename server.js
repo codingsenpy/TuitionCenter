@@ -36,10 +36,8 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
     console.log('Server running on port 3000');
 });
-
 mongoose.connect("mongodb+srv://zain:mongopass@tuitioncenter.7z2uct8.mongodb.net/?retryWrites=true&w=majority&appName=TuitionCenter")
 .then(() => console.log("DB Connected to Server!"))
 .catch((err) => console.log(err));
-
-// mongoose.connect("mongodb://localhost:27017/tuitioncenter")
-// .then(() => console.log("DB Connected to Server!"))                  
+// mongoconnect(()=>{}) 
+    
