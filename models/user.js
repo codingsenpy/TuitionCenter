@@ -27,6 +27,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: function() { return this.role === 1; }
   },
+  attendance:[{
+    date: {
+      type: Date,
+      default: Date.now
+    },
+    status: {
+      type: String,
+      enum: ['Present', 'Absent'],
+      required: true
+    }
+  }],
   specialisation: {
     type: String,
     required: function() { return this.role === 1; }

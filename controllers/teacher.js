@@ -65,7 +65,7 @@ exports.addstd = async (req, res) => {
         if (!centerId || !Array.isArray(studentIds) || studentIds.length === 0) {
             return res.status(400).send("Missing or invalid centerID or studentIds");
         }
-        const studentsToRemove = await students.find({ studentId: { $in: studentIds } });
+        const studentsToRemove = await Students.find({ studentId: { $in: studentIds } });
 
         if (studentsToRemove.length === 0) {
             return res.status(404).send("No matching students found");
@@ -74,7 +74,7 @@ exports.addstd = async (req, res) => {
 
         const result = await centers.updateOne(
             { centerID: centerId },
-            { $pull: { Students: { $in: studentObjectIds } } }
+            { $pull: { students: { $in: studentObjectIds } } }
         );
 
         if (result.modifiedCount === 0) {
@@ -156,9 +156,47 @@ exports.attendance=async (req,res)=>{
     res.sendFile(path.join(__dirname,'../','views','loc.html'))
 }
 
-exports.attedanceOfAllStudents=async (req,res)=>{
+exports.swapStudentTutor = async (req, res) => {
+  try {
+    const {  studentIds, tutorswap } = req.body;
 
-}
+    if (
+      !Array.isArray(studentIds) || 
+      studentIds.length === 0 || 
+      typeof tutorswap !== 'object' ||
+      !tutorswap.deassign || 
+      !tutorswap.assign
+    ) {
+      return res.status(400).send("Invalid studentIds or tutor swap details");
+    }
+
+    // Fetch old and new tutor IDs
+    const [oldTutor, newTutor] = await Promise.all([
+      users.findOne({ email: tutorswap.deassign, role: 1 }),
+      users.findOne({ email: tutorswap.assign, role: 1 })
+    ]);
+
+    if (!oldTutor || !newTutor) {
+      return res.status(404).send("Tutor(s) not found");
+    }
+
+    // Update students
+    const result = await Students.updateMany(
+      { studentId: { $in: studentIds }, tutorID: oldTutor._id },
+      { $set: { tutorID: newTutor._id } }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).send("No students updated");
+    }
+
+    res.send("Tutor reassigned to students successfully");
+  } catch (err) {
+    console.error("Error swapping tutor:", err);
+    res.status(500).send("Internal server error");
+  }
+};
+
 
 exports.location=async (req,res)=>{
     const { latitude, longitude, center } = req.body;

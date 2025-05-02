@@ -1,5 +1,7 @@
 const centers=require("../models/centers")
 const User=require("../models/user")
+const Students=require("../models/student")
+const teacher=require("./teacher")
 const {setuser,getuser}=require("../service/auth")
 const { v4: uuidv4 } = require('uuid')
 
@@ -71,6 +73,7 @@ exports.newteacher = async (req, res) => {
             resume
         });
         const savedTutor = await newTutor.save();
+        
         if(centerID!="0"){
             const result = await centers.updateOne(
             { centerID: centerID },
@@ -83,6 +86,10 @@ exports.newteacher = async (req, res) => {
         
         }
         else{
+          const tutorincenterexist= await centers.findOne({tutors:existing._id})
+        if(tutorincenterexist){
+          return res.send("tutor already exists")
+        }
             const result = await centers.updateOne(
             { centerID: centerID },
             { $push: { tutors: existing._id } }
@@ -138,32 +145,40 @@ exports.removeCenter = async (req, res) => {
         res.send("Center removed successfully");
     } 
  
-    exports.removeTeacher = async (req, res) => {
-        try {
-            const centerID = req.params.cId;
-            const { email } = req.body;
-            console.log(email,centerID)
+exports.removeTeacher = async (req, res) => {
+      try {
+        const centerID = req.params.cId;
+        const { email } = req.body;
+       console.log(email,centerID)
             if (!centerID || !email) {
                 return res.status(400).send("Missing centerID or teacher email");
             }
             const existing = await User.findOne(
                 { email },
             );
+            const emptytutor=await User.findOne({email: "Null"})
             if(!existing){
                 return res.status(404).send("Teacher not found")
             }
 
             const result = await centers.updateOne(
                         { centerID: centerID },
-                        { $pull: { tutors: { tutorId: { $in: [existing._id] } } } }
+                        { $pull: { tutors:  existing._id  } }
                     );
             // const result = await centers.updateOne(
             //     { centerID :centerID},
             //     { $pull: { tutors: existing._id } }
             // );
+            const students = await Students.find({ tutorID: existing._id });
+            const studentIds = students.map(s => s.studentId);
+            await Students.updateMany(
+                  { studentId: { $in: studentIds }, tutorID: existing._id },
+                  { $set: { tutorID: emptytutor._id } }
+                );
             const result2= await User.deleteOne({ email});
 
-            if (result.modifiedCount === 0 && result2.deletedCount===0) {
+            if (result.modifiedCount == 0 && result2.deletedCount==0 &&
+              studentUpdate.modifiedCount == 0) {
                 return res.status(404).send("Teacher not found or already removed");
             }
     
@@ -270,5 +285,20 @@ console.log(center)
   } catch (err) {
     console.error("Error fetching students:", err);
     res.status(500).send("Internal server error");
+  }
+};
+
+exports.getStudentsByTutor = async (req, res) => {
+  try {
+    const tutorEmail = req.params.tutorMail;
+    console.log(tutorEmail)
+    const tutor = await User.findOne({ email: tutorEmail, role: 1 });
+    if (!tutor) return res.status(404).send("Tutor not found");
+
+    const students = await Students.find({ tutorID: tutor._id });
+    res.json(students);
+  } catch (err) {
+    console.error("Error fetching students by tutor:", err);
+    res.status(500).send("Server error");
   }
 };
