@@ -22,20 +22,56 @@ exports.signup=async (req,res)=>{
   res.redirect("/");
 }
 }
-exports.login = async (req, res) => {
-  try {
-      const { number, password } = req.body;
 
-      if (!number || !password) {
+exports.login = async (req, res) => {
+
+  const { number, email, password } = req.body;
+
+  if(email){
+  try {
+      if (!email || !password) {
           return res.status(400).send("Missing phone, password, or role");
       }
 
-      const user = await User.findOne({ number, password});
+      const user = await User.findOne({ email});
       // console.log("User found:", user);
 
       if (!user) {
           return res.status(401)
-          .json({message:"Phone number or password incorrect",
+          .json({message:"Email or password incorrect",
+            success:false
+          });
+      }
+
+      // console.log("1. Login successful. Sending token.");
+      const token = setuser(user);
+      // res.cookie("uid", token, { httpOnly: true, secure: true });
+      // res.send(user);
+      // console.log("2. Login successful. Sending token.");
+      res.status(200).json({
+        success: true,
+        message: "Login successful",
+        user, // optional
+        token
+      });
+  } catch (err) {
+      console.error("Login error:", err);
+      res.status(500).send("Internal server error");
+  }
+}
+
+if(number){
+  try {
+      if (!number || !password) {
+          return res.status(400).send("Missing phone, password, or role");
+      }
+
+      const user = await User.findOne({ number});
+      // console.log("User found:", user);
+
+      if (!user) {
+          return res.status(401)
+          .json({message:"Number or password incorrect",
             success:false
           });
       }
@@ -54,4 +90,5 @@ exports.login = async (req, res) => {
       console.error("Login error:", err);
       res.status(500).send("Internal server error");
   }
+}
 };
