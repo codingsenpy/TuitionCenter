@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
           return res.status(400).send("Missing phone, password, or role");
       }
 
-      const user = await User.findOne({ number, password});
+      const user = await User.findOne({ number});
       // console.log("User found:", user);
 
       if (!user) {

@@ -167,6 +167,7 @@ exports.swapStudentTutor = async (req, res) => {
       !tutorswap.deassign || 
       !tutorswap.assign
     ) {
+      console.log(req.body,"`````````````````````````",studentIds.length===0, typeof tutorswap!=='object',!tutorswap.deassign,!tutorswap.assign)
       return res.status(400).send("Invalid studentIds or tutor swap details");
     }
 
@@ -175,7 +176,9 @@ exports.swapStudentTutor = async (req, res) => {
       users.findOne({ email: tutorswap.deassign, role: 1 }),
       users.findOne({ email: tutorswap.assign, role: 1 })
     ]);
-
+    console.log("ddd",await users.findOne({email:"empty"}))
+    // console.log("req.body",studentIds,oldTutor,newTutor)  
+    // console.log(oldTutor,newTutor)
     if (!oldTutor || !newTutor) {
       return res.status(404).send("Tutor(s) not found");
     }
@@ -199,7 +202,8 @@ exports.swapStudentTutor = async (req, res) => {
 
 
 exports.location=async (req,res)=>{
-    const { latitude, longitude, center } = req.body;
+    let { latitude, longitude, center, tutorMail } = req.body;
+    tutorMail="john@example.com"
     console.log('Received location:', latitude, longitude, center);
     if(!latitude) res.send("Unable to fetch Location")
     const centerlocation = await centers.findOne({ centerID: center }, { location: 1, _id: 0 });
@@ -212,7 +216,28 @@ exports.location=async (req,res)=>{
         console.log(Object.keys(centerlocation))
         console.log(JSON.stringify(centerlocation))
     if(`${newLat} ${newLon}`==centerlocation.location){
-        console.log("attendance succesfull")
+        // console.log("attendance succesfull")
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+  
+        const user = await users.findOne({ email: tutorMail });
+        if (!user) return res.send("User not found");
+  
+        const alreadyMarked = user.attendance.some(entry => {
+          const d = new Date(entry.date);
+          d.setHours(0, 0, 0, 0);
+          return d.getTime() === today.getTime();
+        });
+  
+        if (!alreadyMarked) {
+          user.attendance.push({ date: new Date(), status: "Present" });
+          await user.save();
+          console.log("Attendance marked");
+        } else {
+          console.log("Attendance already marked");
+        }
+  
+  
         res.send("Attendance success")
     }
     else{
