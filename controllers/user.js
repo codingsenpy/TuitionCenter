@@ -67,7 +67,6 @@ if(number){
       }
 
       const user = await User.findOne({ number});
-      const user = await User.findOne({ number});
       // console.log("User found:", user);
 
       if (!user) {
