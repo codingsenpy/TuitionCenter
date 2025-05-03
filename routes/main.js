@@ -6,9 +6,9 @@ const user=require("../controllers/user")
 const router=express.Router()
 
 router.get("",homepage.home)
-router.post("/user",user.signup)
-router.get("/signup",homepage.homeregister)
-router.get("/login",homepage.login)
+router.post("/signup",user.signup)
+router.get("/signupform",homepage.homeregister)
+router.get("/loginform",homepage.login)
 router.post("/login",user.login)
 
 
